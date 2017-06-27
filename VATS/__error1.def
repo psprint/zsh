@@ -1,0 +1,82 @@
+# -*- Mode: sh; sh-indentation: 4; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
+# vim:ft=zsh:sw=4:sts=4:et
+
+typeset -ga errors1
+errors1+=(
+    # Trailing functions in stack trace are all /usr/lib/system/*
+    # 112 bytes in 1 blocks are definitely lost in loss record 468 of 627
+    "* / zsh_main / setupvals / getpwuid / *"
+
+    # As above
+    # 2,744 (16 direct, 2,728 indirect) bytes in 1 blocks are definitely lost in loss record 524 of 542
+    "* / zsh_main / setupvals / gettimeofday / *"
+
+    # Creation of param table, to be collected by OS
+    # 428 bytes in 59 blocks are definitely lost in loss record 471 of 518
+    "main / zsh_main / setupvals / createparamtable / ztrdup / zalloc / *"
+
+    # getlogin is a OS X call, should be as above
+    "main / zsh_main / setupvals / createparamtable / getlogin / *"
+
+    # Structures for hooks
+    # 72 bytes in 3 blocks are definitely lost in loss record 339 of 518
+    "main / zsh_main / setupvals / addhookdefs / addhookdef / znewlinklist / zalloc / *"
+
+    # addvars is rather no leak
+    # 2 bytes in 1 blocks are definitely lost in loss record 11 of 518
+    "main / zsh_main / loop / execode / * / addvars / ztrdup / zalloc / *"
+
+    # Trailing calls are from libsystem*, libobjc, etc
+    "* / execpline / * / execcmd_exec / zfork / fork / *"
+
+    # As above
+    "* / execcmd_exec / prefork / stringsubst / getproc / zfork / fork / *"
+
+    # As above
+    "* / execode / execlist / execpline / execpline2 / zfork / fork / *"
+
+    # As above
+    "* / eval / execode / execlist / execpline / * / zsh_main / zfork / setlocale / fork / *"
+
+    # As above
+    "* / execrepeat / execlist / execpline / execpline2 / execcmd_exec / zfork / *"
+
+    # As above
+    "* / execcmd_exec / prefork / stringsubst / getoutput / zfork / fork / *"
+
+    # As above
+    "* / multsub / prefork / stringsubst / getoutput / zfork / fork / *"
+
+    # As above
+    "* / execsimple / addvars / prefork / stringsubst / getoutput / zfork / fork / *"
+
+    # As above
+    "* / addvars / prefork / stringsubst / getoutput / zfork / fork / *"
+
+    # A06
+    " main / zsh_main / setlocale / *"
+
+    # A06
+    "main / zsh_main / init_io / *"
+
+    # A04
+    "* / parse_event / zshlex / gettok / ingetc / inputline / shingetline / fgetc / *"
+
+    # A04, OS X related
+    "bootstrap_look_up3 / _xpc_interface_routine / xpc_pipe_routine / *"
+
+    # A04, OS X related
+    "dispatch_once_f / _dispatch_client_callout / * / bootstrap_look_up3 / _xpc_interface_routine / xpc_pipe_routine / *"
+
+    #
+    # db_gdbm
+    #
+
+    # Weird gdbm error:
+    # Syscall param write(buf) points to uninitialised byte(s)
+    "* / bin_eval / eval / execode / * / bin_ztie / * / --BLOCK-- / * / eval / * / bin_ztie / * / write"
+
+    # Other instance of the above
+    # Syscall param write(buf) points to uninitialised byte(s)
+    " * / execcmd_exec / addvars / assignaparam / * / gdbmhashsetfn / * / --BLOCK-- / * / addvars / gdbmhashsetfn / * / write"
+)
