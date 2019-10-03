@@ -774,7 +774,7 @@ AS_HELP_STRING([--with-term-lib=LIBS],[search space-separated LIBS for terminal 
   termcap_curses_order="$withval"
   AC_SEARCH_LIBS(tigetstr, [$termcap_curses_order])
 else
-  termcap_curses_order="$ncursesw_test $ncurses_test tinfo termcap curses"
+  termcap_curses_order="$ncursesw_test $ncurses_test tinfow tinfo termcap curses"
 fi],
 [case "$host_os" in
   solaris*)
@@ -783,7 +783,7 @@ fi],
    DL_EXT="${DL_EXT=sl}"
    termcap_curses_order="Hcurses $ncursesw_test $ncurses_test curses termcap" ;;
   *)
-   termcap_curses_order="$ncursesw_test $ncurses_test tinfo termcap curses" ;;
+   termcap_curses_order="$ncursesw_test $ncurses_test tinfow tinfo termcap curses" ;;
 esac])dnl
 
 AH_TEMPLATE([ZSH_NO_XOPEN],
@@ -831,7 +831,18 @@ AC_CACHE_CHECK(if we need to ignore ncurses, zsh_cv_ignore_ncurses,
   zsh_cv_ignore_ncurses=no
   ;;
   *)
-  zsh_cv_ignore_ncurses=yes
+    dnl If the tgetent nor tigetflag weren't found in the libncurses*.so, then
+    dnl there will be no conflict with the other terminal library selected (e.g.
+    dnl libtinfo) and it's possible to link ncurses provided that it is working
+    AC_SEARCH_LIBS(initscr, [ncursesw ncurses curses])
+    case $LIBS in
+      *-lncurses*|*-lcurses*)
+      zsh_cv_ignore_ncurses=no
+      ;;
+      *)
+      zsh_cv_ignore_ncurses=yes
+      ;;
+    esac
   ;;
 esac])
 
