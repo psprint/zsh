@@ -29,6 +29,7 @@
 
 #include "zsh.mdh"
 #include "subst.pro"
+#include "glob.pro"
 
 #define LF_ARRAY	1
 
@@ -1847,6 +1848,10 @@ paramsubst(LinkList l, LinkNode n, char **str, int qt, int pf_flags,
      * nested (P) flags.
      */
     int fetch_needed;
+    /*
+     * The string with the code passed to the `x' flag.
+     */
+    char *x_code = NULL;
 
     *s++ = '\0';
     /*
@@ -2242,6 +2247,21 @@ paramsubst(LinkList l, LinkNode n, char **str, int qt, int pf_flags,
 		    } else
 			goto flagerr;
 		    break;
+
+                case 'x':
+                    /* Adapt the input for glob_exec_string */
+                    ++s;
+
+                    x_code = glob_exec_string(&s);
+                    if (x_code == NULL) {
+                        goto flagerr;
+                    }
+
+                    /* Adapt the pointer after glob_exec_string */
+                    --s;
+
+                    zwarn("Got code: %s", x_code);
+                    break;
 
 		default:
 		  flagerr:

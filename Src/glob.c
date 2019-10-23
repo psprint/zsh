@@ -1052,7 +1052,7 @@ static struct qual *dup_qual_list(struct qual *orig, struct qual **lastp)
  */
 
 /**/
-static char *
+char *
 glob_exec_string(char **sp)
 {
     char sav, *tt, *sdata, *s = *sp;
